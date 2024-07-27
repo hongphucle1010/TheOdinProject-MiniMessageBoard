@@ -15,10 +15,10 @@ CREATE TABLE IF NOT EXISTS messages (
 
 ${messages
   .map((message) => {
-    const formattedDate = message.added.toISOString(); // Format the date to ISO string
+    const formattedDate = message.date.toISOString(); // Format the date to ISO string
     return `
           INSERT INTO messages (username, message, date)
-          VALUES ('${message.user}', '${message.text}', '${formattedDate}');
+          VALUES ('${message.username}', '${message.message}', '${formattedDate}');
       `;
   })
   .join("")}
@@ -29,6 +29,9 @@ async function main() {
   console.log("seeding...");
   const client = new Client({
     connectionString: `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   });
   await client.connect();
   await client.query(SQL);
