@@ -1,28 +1,18 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 
 const { Client } = require("pg");
 const messages = require("../data/messageData");
 require("dotenv").config();
+
 const SQL = `
 DROP TABLE IF EXISTS messages;
 
 CREATE TABLE IF NOT EXISTS messages (
-  id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  username VARCHAR ( 255 ),
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255),
   message TEXT,
   date TIMESTAMP
 );
-
-${messages
-  .map((message) => {
-    const formattedDate = message.date.toISOString(); // Format the date to ISO string
-    return `
-          INSERT INTO messages (username, message, date)
-          VALUES ('${message.username}', '${message.message}', '${formattedDate}');
-      `;
-  })
-  .join("")}
-  
 `;
 
 async function main() {
@@ -33,10 +23,20 @@ async function main() {
       rejectUnauthorized: false,
     },
   });
+
   await client.connect();
   await client.query(SQL);
+
+  const insertPromises = messages.map((message) => {
+    return client.query(
+      `INSERT INTO messages (username, message, date) VALUES ($1, $2, $3)`,
+      [message.username, message.message, message.date]
+    );
+  });
+
+  await Promise.all(insertPromises);
   await client.end();
   console.log("done");
 }
 
-main();
+main().catch(console.error);

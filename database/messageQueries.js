@@ -5,6 +5,7 @@ const getMessages = async () => {
   const { rows } = await client.query(
     "SELECT username, message, date FROM messages ORDER BY date DESC"
   );
+  console.log(rows);
   client.release();
   return rows;
 };
@@ -14,7 +15,7 @@ const insertMessage = async (message, username) => {
   await client.query(
     "INSERT INTO messages (message, username, date) VALUES ($1, $2, $3)",
     [message, username, new Date()]
-  );
+  ); 
   client.release();
 };
 
