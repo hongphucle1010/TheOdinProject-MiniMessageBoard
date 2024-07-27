@@ -18,7 +18,7 @@
       <% messages.forEach((message) => { %>
       <li>
         <strong><%= message.username %></strong>: <%= message.message %>
-        <small><%= message.date.toLocaleString() %></small>
+        <small style="margin-left: 1rem;"><%= message.date %></small>
       </li>
       <% }); %>
     </ul>
