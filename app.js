@@ -17,7 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware function
 app.use((req, res, next) => {
-  console.log("This is a middleware function");
   next();
 });
 

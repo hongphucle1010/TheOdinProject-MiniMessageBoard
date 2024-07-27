@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const messages = require("../data/messageData");
+// const messages = require("../data/messageData");
+const { getMessages } = require("../controllers/messageController");
 
-router.use((req, res) => {
-  console.log("This is a middleware function for root routes");
-  res.render("index", { title: "Mini Messageboard", messages: messages });
-});
+router.use(getMessages);
 
 module.exports = router;
